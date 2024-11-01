@@ -1,11 +1,19 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'screens/sign_in_screen.dart';
 import 'screens/register_screen.dart';
+import 'screens/home_screen.dart' as home; // Import HomeScreen with prefix
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(); // Initialize Firebase
+  try {
+    await Firebase.initializeApp(); // Initialize Firebase
+  } catch (e) {
+    if (kDebugMode) {
+      print('Error initializing Firebase: $e');
+    } // Print error if initialization fails
+  }
 
   runApp(const MyApp());
 }
@@ -25,6 +33,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/sign-in': (context) => const SignInScreen(),
         '/register': (context) => const RegisterScreen(),
+        '/home': (context) => const home.HomeScreen(), // Add HomeScreen to routes with prefix
       },
     );
   }

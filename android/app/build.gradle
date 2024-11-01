@@ -12,8 +12,8 @@ android {
     compileSdk = 35 // Ensure this matches your plugin requirements
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     kotlinOptions {
@@ -41,13 +41,15 @@ flutter {
 }
 
 dependencies {
-    // Firebase BoM (Bill of Materials)
-    implementation platform('com.google.firebase:firebase-bom:33.5.1')
+    // Import the BoM for the Firebase platform
+    implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
 
-    // Firebase SDKs - add as needed
-    implementation 'com.google.firebase:firebase-auth'
-    implementation 'com.google.firebase:firebase-firestore'
-    implementation 'com.google.firebase:firebase-analytics'
+    // Add the dependency for the Firebase Authentication library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation("com.google.firebase:firebase-auth")
+
+    // Also add the dependency for the Google Play services library and specify its version
+    implementation("com.google.android.gms:play-services-auth:21.0.0")
 }
 
 apply plugin: 'com.google.gms.google-services'
