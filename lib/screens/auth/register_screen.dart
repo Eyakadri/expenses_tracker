@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,7 +8,6 @@ class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _RegisterScreenState createState() => _RegisterScreenState();
 }
 
@@ -15,82 +16,96 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
   final _nameController = TextEditingController();
   final _repeatPasswordController = TextEditingController();
+  bool isLoading = false;
 
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _nameController.dispose();
+    _repeatPasswordController.dispose();
+    super.dispose();
+  }
   void _register() async {
-    _emailController.text.trim();
+    final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
     final repeatPassword = _repeatPasswordController.text.trim();
 
-    if (password != repeatPassword) {
-      // Handle error: passwords do not match
-      showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('Error'),
-          content: const Text('Passwords do not match.'),
-          actions: [
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(ctx).pop();
-              },
-            ),
-          ],
-        ),
+    if (_nameController.text.trim().isEmpty || email.isEmpty || password.isEmpty || repeatPassword.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please fill in all fields")),
       );
       return;
     }
 
+    if (password != repeatPassword) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Passwords do not match")),
+      );
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
     try {
-      // Register user in Firebase
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: _emailController.text,
+        email: email,
         password: password,
       );
-
-      // Navigate to Sign In screen or Home screen after successful registration
-      // ignore: use_build_context_synchronously
       Navigator.pushNamed(context, '/sign-in');
     } on FirebaseAuthException catch (e) {
-      // Handle registration errors
-      showDialog(
-        // ignore: use_build_context_synchronously
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('Error'),
-          content: Text(e.message ?? 'An error occurred.'),
-          actions: [
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(ctx).pop();
-              },
-            ),
-          ],
-        ),
+      String errorMessage;
+      switch (e.code) {
+        case 'email-already-in-use':
+          errorMessage = 'The email address is already in use by another account.';
+          break;
+        case 'invalid-email':
+          errorMessage = 'The email address is not valid.';
+          break;
+        case 'operation-not-allowed':
+          errorMessage = 'Email/password accounts are not enabled.';
+          break;
+        case 'weak-password':
+          errorMessage = 'The password is too weak.';
+          break;
+        default:
+          errorMessage = 'An unknown error occurred.';
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage)),
       );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F4F8), // Light background color
+      backgroundColor: const Color(0xFFF3F4F8),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // App Icon
-              const Icon(
-                Icons.monetization_on,
-                size: 80,
-                color: Color(0xFFFFA726), // Orange color matching UI kit
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
+                padding: const EdgeInsets.all(15.0),
+                child: Icon(
+                  Icons.attach_money,
+                  size: 40,
+                color: Colors.pink[400],
+                ),
               ),
               const SizedBox(height: 30),
-              
-              // Title
               Text(
                 "Register",
                 style: GoogleFonts.poppins(
@@ -100,8 +115,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
               const SizedBox(height: 10),
-              
-              // Subtitle
               Text(
                 "If you don't have an account",
                 style: GoogleFonts.poppins(
@@ -110,8 +123,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              
-              // Text Fields
               _buildTextField("Full Name", _nameController),
               const SizedBox(height: 15),
               _buildTextField("Email Address", _emailController),
@@ -120,25 +131,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(height: 15),
               _buildTextField("Repeat Password", _repeatPasswordController, obscureText: true),
               const SizedBox(height: 20),
-              
-              // Register Button
               ElevatedButton(
-                onPressed: _register,
+                onPressed: isLoading ? null : _register,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFFA726), // Orange color for button
+                  backgroundColor: const Color(0xFFFFA726),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(30),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 50),
+                  elevation: 2,
                 ),
-                child: Text(
-                  "REGISTER",
-                  style: GoogleFonts.poppins(fontSize: 18, color: Colors.white),
-                ),
+                child: isLoading
+                    ? const CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      )
+                    : Text(
+                        "REGISTER",
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
               ),
               const SizedBox(height: 20),
-              
-              // Sign In Redirect
               TextButton(
                 onPressed: () {
                   Navigator.pushNamed(context, '/sign-in');
@@ -155,7 +171,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  // Custom TextField Builder
   Widget _buildTextField(String hint, TextEditingController controller, {bool obscureText = false}) {
     return TextField(
       controller: controller,
@@ -169,7 +184,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           borderSide: BorderSide(color: Colors.grey.shade300),
         ),
         filled: true,
-        fillColor: Colors.white, // White background color for text fields
+        fillColor: Colors.white,
       ),
     );
   }

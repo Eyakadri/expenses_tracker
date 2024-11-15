@@ -1,174 +1,112 @@
+import 'package:expenses_tracker/screens/itemscreen/add_item_screen.dart';
+import 'package:expenses_tracker/screens/challenges_screen.dart';
+import 'package:expenses_tracker/screens/stats/stat_screen.dart'; // Ensure this import is correct and the file exists
+import 'package:expenses_tracker/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class HomeScreen extends StatelessWidget {
+
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _selectedIndex = 0; // Track the selected index
+static final List<Widget> _screens =<Widget>[
+  Home(),
+  StatScreen(),
+  ChallengesScreen(),
+  AddItemScreen()
+
+];
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index; // Update selected index
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final screenHeight = size.height;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF3F4F8),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.menu, color: Colors.black),
-          onPressed: () {
-            // Handle menu action
-          },
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications, color: Colors.black),
-            onPressed: () {
-              // Handle notification action
-            },
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Budget for February",
-              style: GoogleFonts.poppins(fontSize: 18, color: Colors.grey[700]),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              "\$3400.00",
-              style: GoogleFonts.poppins(
-                fontSize: 36,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(height: 5),
-            Text(
-              "Remaining Budget",
-              style: GoogleFonts.poppins(fontSize: 18, color: Colors.grey[700]),
-            ),
-            const SizedBox(height: 5),
-            Text(
-              "\$1200.60",
-              style: GoogleFonts.poppins(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.green,
-              ),
-            ),
-            const SizedBox(height: 20),
-            // Chart placeholder
-            Container(
-              height: 150,
+      body: Stack(
+        children: [
+          // Main Budget Container
+          _screens[_selectedIndex],
+
+          // Bottom Navigation Bar with padding and rounded corners
+          Positioned(
+            bottom: screenHeight / 35,
+            left: size.width / 40,
+            right: size.width / 40,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(30),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.shade300,
-                    blurRadius: 10,
+                    color: Colors.grey.withOpacity(0.2),
                     spreadRadius: 2,
+                    blurRadius: 10,
                     offset: const Offset(0, 5),
                   ),
                 ],
               ),
-              child: Center(child: Text("Bar Chart Placeholder")),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Top Categories",
-                  style: GoogleFonts.poppins(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  GestureDetector(
+                    onTap: () => _onItemTapped(0),
+                    child: Icon(
+                      Icons.home,
+                      color: _selectedIndex == 0 ? Colors.orange : Colors.grey[600],
+                    ),
                   ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    // Navigate to All Categories
-                  },
-                  child: Text(
-                    "See All",
-                    style: GoogleFonts.poppins(color: Colors.orange),
+                  GestureDetector(
+                    onTap: () => _onItemTapped(1),
+                    child: Icon(
+                      Icons.bar_chart,
+                      color: _selectedIndex == 1 ? Colors.orange : Colors.grey[600],
+                    ),
                   ),
-                ),
-              ],
+                  GestureDetector(
+                    onTap: () => _onItemTapped(2),
+                    child: Icon(
+                      Icons.emoji_events,
+                      color: _selectedIndex == 2 ? Colors.orange : Colors.grey[600],
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => _onItemTapped(3),
+                    child: Icon(
+                      Icons.add,
+                      color: _selectedIndex == 3 ? Colors.orange : Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 10),
-            // Top categories placeholder
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildCategoryCard("Clothes", "\$160.30", 50, Colors.purple),
-                _buildCategoryCard("Grocery", "\$120.20", 30, Colors.teal),
-                _buildCategoryCard("Drinks", "\$80.50", 20, Colors.red),
-                _buildCategoryCard("Coffee", "\$45.10", 10, Colors.blue),
-              ],
-            ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.orange,
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart),
-            label: 'Statistics',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_circle, size: 40),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.track_changes),
-            label: 'Challenges',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
           ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildCategoryCard(String category, String amount, double percent, Color color) {
-    return Column(
-      children: [
-        Container(
-          height: 60,
-          width: 60,
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.2),
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: Icon(Icons.category, color: color),
-        ),
-        const SizedBox(height: 5),
-        Text(
-          category,
-          style: GoogleFonts.poppins(fontSize: 14, color: Colors.black),
-        ),
-        Text(
-          amount,
-          style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey[700]),
-        ),
-        Text(
-          "$percent%",
-          style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey[600]),
-        ),
-      ],
+class StatScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Text('Stat Screen'),
+      ),
     );
   }
 }
