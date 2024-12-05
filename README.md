@@ -41,10 +41,6 @@ To run this project, you'll need to:
 ## 📱 Screenshots
 <img width="350" alt="ff" src="https://github.com/user-attachments/assets/afb7c071-de2f-49a4-aa3a-8212c3aeb382">
 
-4r4![image](https://github.com/user-attachments/assets/59031152-40ef-4924-b5ad-2faa087db2d3)
-
-![image](https://github.com/user-attachments/assets/70a09269-404d-4149-b512-0e92830f86e5)
-
 <img width="350" alt="fgfgfg" src="https://github.com/user-attachments/assets/905b4cfc-42c6-41c6-a33c-dfe60821a762">
 
 <img width="350" alt="foj" src="https://github.com/user-attachments/assets/2303a415-9bf5-4fd1-9fb8-7f62b7a9c006">
