@@ -41,10 +41,11 @@ To run this project, you'll need to:
 ## 📱 Screenshots
 <img width="350" alt="ff" src="https://github.com/user-attachments/assets/afb7c071-de2f-49a4-aa3a-8212c3aeb382">
 
-4r4![image](https://github.com/user-attachments/assets/33f237ee-7e23-4162-b8c3-a8757a909bae)
-
+<img width="350" alt="4r4" src="https://github.com/user-attachments/assets/8c7ce820-e2c9-4c1d-8bfc-332c51a6ccac">
 
 <img width="350" alt="fgfgfg" src="https://github.com/user-attachments/assets/905b4cfc-42c6-41c6-a33c-dfe60821a762">
+
+<img width="350" alt="jjg" src="https://github.com/user-attachments/assets/64cc3bec-9967-4ff1-b45a-f4ffd65c491f">
 
 <img width="350" alt="foj" src="https://github.com/user-attachments/assets/2303a415-9bf5-4fd1-9fb8-7f62b7a9c006">
 
